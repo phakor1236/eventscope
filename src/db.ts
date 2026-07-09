@@ -27,13 +27,11 @@ export async function migrate() {
     )`;
 }
 
-// type (not interface): postgres.js's bulk-insert helper needs an implicit
-// index signature, which TS only gives to type aliases.
 export type EventRow = {
   contract_addr: string;
   event_name: string;
-  args: Record<string, unknown>; // plain object; the driver serializes it to jsonb exactly once
-  block_number: string; // bigint as text; Postgres casts to int8 (driver's default types don't take JS bigint)
+  args: postgres.JSONValue; // plain object (bigints pre-converted); sql.json() serializes it exactly once
+  block_number: string; // bigint as text; Postgres casts to int8
   block_time: Date | null;
   tx_hash: string;
   log_index: number;
@@ -41,11 +39,20 @@ export type EventRow = {
 
 // Idempotency invariant: (tx_hash, log_index) uniquely identifies a log on chain,
 // so re-scanning any block range can never store the same event twice.
+// Row-by-row inside one transaction — fine at this volume; batch it if that ever changes.
 export async function insertEvents(rows: EventRow[]): Promise<number> {
   if (rows.length === 0) return 0;
-  const inserted = await sql`
-    INSERT INTO events ${sql(rows)}
-    ON CONFLICT (tx_hash, log_index) DO NOTHING
-    RETURNING id`;
-  return inserted.length;
+  let inserted = 0;
+  await sql.begin(async (tx) => {
+    for (const r of rows) {
+      const res = await tx`
+        INSERT INTO events (contract_addr, event_name, args, block_number, block_time, tx_hash, log_index)
+        VALUES (${r.contract_addr}, ${r.event_name}, ${tx.json(r.args)}, ${r.block_number},
+                ${r.block_time}, ${r.tx_hash}, ${r.log_index})
+        ON CONFLICT (tx_hash, log_index) DO NOTHING
+        RETURNING id`;
+      inserted += res.length;
+    }
+  });
+  return inserted;
 }
