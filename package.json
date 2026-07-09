@@ -4,12 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "probe": "tsx src/probe.ts"
+    "probe": "tsx src/probe.ts",
+    "store": "node --env-file-if-exists=.env --import=tsx src/store.ts"
   },
   "dependencies": {
+    "postgres": "^3.4.9",
     "viem": "^2.55.0"
   },
   "devDependencies": {
+    "@types/node": "^26.1.1",
     "tsx": "^4.23.0",
     "typescript": "^7.0.2"
   }
