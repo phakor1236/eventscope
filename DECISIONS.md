@@ -10,6 +10,13 @@
 - 理由:Phase 2 接新合約零遷移;冪等鍵天然;JSONB 查詢夠撐 MVP dashboard;
   混合式=提前優化,遇到查詢痛點再升級
 
+## 2026-07-09 — F6 部署:GitHub public + Vercel(web)+ Railway(indexer)
+
+- 選項:repo 先 private 再轉 / 直接 public;indexer 上 Railway / GitHub Actions 排程 / Render
+- 選擇:**直接 public;Railway**
+- 理由:履歷用途終究公開,commit 歷史本身是資產;Railway 給真長駐 daemon 的履歷敘事,
+  試用額度內免費(Actions 排程留作免費備案)
+
 ## 2026-07-09 — F4/F5 組裝:Next.js 一體式
 
 - 選項:Next.js 一體式(API routes+dashboard 同 app,Vercel 一次部署)/
