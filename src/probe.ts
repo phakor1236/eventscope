@@ -37,7 +37,7 @@ async function main() {
     total += logs.length;
   }
   console.log("\n--- Summary ---");
-  for (const [name, count] of Object.entries(counts)) {
+  for (const [name, count] of Object.entries(counts).sort((a,b) => b[1] - a[1])) {
     console.log(`${name}: ${count}`);
   }
   console.log(`\nTotal: ${total} events`);
