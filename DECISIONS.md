@@ -10,6 +10,14 @@
 - 理由:Phase 2 接新合約零遷移;冪等鍵天然;JSONB 查詢夠撐 MVP dashboard;
   混合式=提前優化,遇到查詢痛點再升級
 
+## 2026-07-09 — F4/F5 組裝:Next.js 一體式
+
+- 選項:Next.js 一體式(API routes+dashboard 同 app,Vercel 一次部署)/
+  獨立 API 服務(Hono/Express 隨 indexer 住 Railway)
+- 選擇:**Next.js 一體式**
+- 理由:水管沿用 FlipSide 的 Next 經驗、少一個部署面、免 CORS;
+  indexer 仍獨立跑 Railway(Vercel 跑不了長駐)
+
 ## 2026-07-09 — 節奏改方案 C:教練連續蓋產品,學習主通道改 kata
 
 - 選項:A) 照舊逐 feature 三關 B) 教練直衝蓋完再總驗收 C) 連續蓋+每 feature
