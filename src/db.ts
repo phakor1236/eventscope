@@ -32,7 +32,7 @@ export async function migrate() {
 export type EventRow = {
   contract_addr: string;
   event_name: string;
-  args: string; // JSON text; Postgres casts it to jsonb on insert
+  args: Record<string, unknown>; // plain object; the driver serializes it to jsonb exactly once
   block_number: string; // bigint as text; Postgres casts to int8 (driver's default types don't take JS bigint)
   block_time: Date | null;
   tx_hash: string;

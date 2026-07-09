@@ -48,7 +48,7 @@ async function main() {
       rows.push({
         contract_addr: PRICE_DUEL_ADDRESS,
         event_name: log.eventName,
-        args: JSON.stringify(log.args, jsonSafe),
+        args: JSON.parse(JSON.stringify(log.args, jsonSafe)), // round-trip: bigint -> string, keeps it an object
         block_number: log.blockNumber.toString(),
         block_time: await blockTime(log.blockNumber),
         tx_hash: log.transactionHash,
