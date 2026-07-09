@@ -18,6 +18,7 @@ async function main() {
   console.log(`Blocks ${DEPLOY_BLOCK} -> ${latest}\n`);
 
   let total = 0;
+  const counts: Record<string, number> = {};
   for (let from = DEPLOY_BLOCK; from <= latest; from += CHUNK_SIZE + 1n) {
     const to = from + CHUNK_SIZE > latest ? latest : from + CHUNK_SIZE;
     const logs = await client.getLogs({
@@ -28,11 +29,16 @@ async function main() {
     });
     console.log(`chunk ${from} -> ${to}: ${logs.length} events`);
     for (const log of logs) {
+      counts[log.eventName] = (counts[log.eventName] ?? 0) + 1; 
       console.log(`  [block ${log.blockNumber} | log ${log.logIndex}] ${log.eventName}`);
       console.log(`    args: ${JSON.stringify(log.args, (_, v) => (typeof v === "bigint" ? v.toString() : v))}`);
       console.log(`    tx:   ${log.transactionHash}`);
     }
     total += logs.length;
+  }
+  console.log("\n--- Summary ---");
+  for (const [name, count] of Object.entries(counts)) {
+    console.log(`${name}: ${count}`);
   }
   console.log(`\nTotal: ${total} events`);
 }
