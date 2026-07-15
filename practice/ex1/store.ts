@@ -21,13 +21,24 @@ export class MemoryEventStore {
   ///  - 同一批裡的重複也一樣要擋。
   insert(batch: EventRow[]): number {
     // TODO
-    throw new Error("TODO");
+    let numCount = 0;
+    for (const i of batch){
+      if(!this.has(i.tx_hash,i.log_index)){
+        const key = `${i.tx_hash}-${i.log_index}`;
+
+        this.rows.set(key, i);
+        numCount++;
+      } 
+    }  
+    return numCount;
+
   }
 
   /// 職責:這張身分證 (txHash, logIndex) 收過沒?
   has(txHash: string, logIndex: number): boolean {
     // TODO
-    throw new Error("TODO");
+    const combo =  `${txHash}-${logIndex}`;
+    return this.rows.has(combo);
   }
 
   // ---- 周邊:已寫好,不要動 ----
